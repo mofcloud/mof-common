@@ -1,4 +1,4 @@
-package page
+package pager
 
 import (
 	"encoding/base64"
