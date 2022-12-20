@@ -103,3 +103,11 @@ func FromStringPointer(in *string, de string) string {
 
 	return *in
 }
+
+func FromBoolPointer(in *bool, de bool) bool {
+	if in == nil {
+		return de
+	}
+
+	return *in
+}
