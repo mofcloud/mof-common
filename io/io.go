@@ -80,16 +80,6 @@ func ContainsStringSlice(src []string, key string) (bool, int) {
 	return false, -1
 }
 
-func ContainsAttributeSlice(src []*Attribute, key string) (bool, int) {
-	for i := range src {
-		if src[i].Key == key {
-			return true, i
-		}
-	}
-
-	return false, -1
-}
-
 func RemoveSpace(src string) string {
 	src = strings.TrimSpace(src)
 	src = strings.ReplaceAll(src, " ", "")
