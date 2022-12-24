@@ -3,6 +3,9 @@ package perr
 import "github.com/pkg/errors"
 
 func Wrap(err error) error {
+	if err == nil {
+		return nil
+	}
 	type stackTracer interface {
 		StackTrace() errors.StackTrace
 	}
