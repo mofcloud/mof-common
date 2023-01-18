@@ -58,6 +58,23 @@ func DedupStringSlice(src []string) []string {
 	return res
 }
 
+func DedupInt64Slice(src []int64) []int64 {
+	m := make(map[int64]bool)
+	res := make([]int64, 0)
+
+	for i := range src {
+		if _, exist := m[src[i]]; !exist {
+			m[src[i]] = true
+		}
+	}
+
+	for k, _ := range m {
+		res = append(res, k)
+	}
+
+	return res
+}
+
 func JoinStringPtr(src []*string) string {
 	tmp := make([]string, 0)
 

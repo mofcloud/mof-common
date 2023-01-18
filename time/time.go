@@ -5,8 +5,8 @@
 package ptime
 
 import (
-	"errors"
 	"fmt"
+	"github.com/pkg/errors"
 	"strings"
 	"time"
 )
@@ -230,4 +230,13 @@ func (t *TimePeriod) StartAndEndInMonth(month string) (time.Time, time.Time, err
 	}
 
 	return resStart, resEnd, errors.New(errMsg)
+}
+
+func (t *TimePeriod) OneMonthBefore() error {
+	lastMonthStr, err := LastMonthString(t.Start)
+	if err != nil {
+		return err
+	}
+	t.Start = lastMonthStr
+	return nil
 }
