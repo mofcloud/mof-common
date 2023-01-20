@@ -118,3 +118,19 @@ func FromBoolPointer(in *bool, de bool) bool {
 
 	return *in
 }
+
+func FromFloat32Pointer(in *float32, de float64) float64 {
+	if in == nil {
+		return de
+	}
+
+	return float64(*in)
+}
+
+func FromFloat64Pointer(in *float64, de float64) float64 {
+	if in == nil {
+		return de
+	}
+
+	return *in
+}
