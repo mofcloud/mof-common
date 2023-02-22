@@ -40,3 +40,14 @@ func GetCurrency(in string) (string, float64, error) {
 
 	return cur, amount, nil
 }
+
+func ToCost(cost float64, currency string) string {
+	switch currency {
+	case curLib.CNY.String():
+		return fmt.Sprintf("¥%f", cost)
+	case curLib.USD.String():
+		return fmt.Sprintf("$%f", cost)
+	}
+
+	return fmt.Sprintf("%f %s", cost, currency)
+}
