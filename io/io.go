@@ -134,3 +134,11 @@ func FromFloat64Pointer(in *float64, de float64) float64 {
 
 	return *in
 }
+
+func StringWithDefault(in string, de string) string {
+	if len(in) > 0 {
+		return in
+	}
+
+	return de
+}
