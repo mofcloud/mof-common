@@ -130,7 +130,7 @@ func LastDayOfMonthString(ts time.Time) string {
 
 	// we are already at next month
 	// now shift left for 24 hours
-	ts.Add(-24 * time.Hour)
+	ts = ts.Add(-24 * time.Hour)
 
 	return TimeToLayoutDay(ts)
 }
