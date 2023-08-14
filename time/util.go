@@ -513,3 +513,15 @@ func DaysInMonth(month string) (int, error) {
 
 	return daysInCurrMonth, nil
 }
+
+func MonthToTimePeriodDaily(month string) *TimePeriod {
+	tp := &TimePeriod{
+		Start: fmt.Sprintf("%s-01", month),
+	}
+
+	ts, _ := StringToTime(tp.Start)
+	ts = LastDayOfMonthTimeActual(ts)
+	tp.End = fmt.Sprintf("%s-%d", month, ts.Day())
+
+	return tp
+}
