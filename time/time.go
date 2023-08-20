@@ -240,3 +240,7 @@ func (t *TimePeriod) OneMonthBefore() error {
 	t.Start = lastMonthStr
 	return nil
 }
+
+func (t *TimePeriod) String() string {
+	return fmt.Sprintf("%s->%s", t.Start, t.End)
+}
