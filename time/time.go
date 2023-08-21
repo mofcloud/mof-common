@@ -127,10 +127,31 @@ func (t *TimePeriod) ToMonthListForGCP() []string {
 func (t *TimePeriod) ToDayList() []string {
 	res := make([]string, 0)
 
-	tsStart, _ := StringToTime(t.Start)
-	tsEnd, _ := StringToTime(t.End)
+	startTime := t.Start
+	endTime := t.End
 
-	for tsEnd.After(tsStart) {
+	// check element
+	if IsStdMonthLayout(t.Start) {
+		startTime = fmt.Sprintf("%s-01", startTime)
+	}
+
+	if IsStdMonthLayout(endTime) {
+		now := time.Now()
+		currMonth := TimeToLayoutMonth(now)
+
+		if endTime == currMonth {
+			// set to current date
+			endTime = TimeToLayoutDay(now)
+		} else {
+			ts, _ := StringToTime(endTime)
+			endTime = LastDayOfMonthString(ts)
+		}
+	}
+
+	tsStart, _ := StringToTime(startTime)
+	tsEnd, _ := StringToTime(endTime)
+
+	for !tsEnd.Before(tsStart) {
 		res = append(res, TimeToLayoutDay(tsStart))
 		tsStart = NextDayLayoutDayTime(tsStart)
 	}
