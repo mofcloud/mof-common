@@ -15,7 +15,13 @@ func RoundFloat64(in float64, len int) float64 {
 	}
 
 	di := math.Pow10(len)
-	return math.Round(in*di) / di
+	res := math.Round(in*di) / di
+
+	if res == 0 {
+		res = math.Abs(res)
+	}
+
+	return res
 }
 
 func RoundFloat64FromString(in string, len int) (float64, error) {
@@ -29,5 +35,10 @@ func RoundFloat64FromString(in string, len int) (float64, error) {
 	}
 
 	di := math.Pow10(len)
-	return math.Round(raw*di) / di, nil
+	res := math.Round(raw*di) / di
+
+	if res == 0 {
+		res = math.Abs(res)
+	}
+	return res, nil
 }
