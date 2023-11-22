@@ -1,4 +1,4 @@
-package ex
+package pex
 
 import (
 	_ "embed"
