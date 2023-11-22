@@ -36,6 +36,18 @@ type Exchange struct {
 	ByMonth  []*ExchangeByMonth `json:"byMonth"`
 }
 
+func (e *Exchange) Copy() *Exchange {
+	res := &Exchange{
+		BaseCode: e.BaseCode,
+	}
+
+	for i := range e.ByMonth {
+		res.ByMonth = append(res.ByMonth, e.ByMonth[i].Copy())
+	}
+
+	return res
+}
+
 func (e *Exchange) GetByMonth(month string) *ExchangeByMonth {
 	for i := range e.ByMonth {
 		if e.ByMonth[i].Month == month {
@@ -62,6 +74,10 @@ func (e *Exchange) Finish() {
 	}
 }
 
+func (e *Exchange) Convert(ts string, origin float64, from, to string) (float64, bool) {
+
+}
+
 func NewExchangeByMonth(month string) *ExchangeByMonth {
 	return &ExchangeByMonth{
 		Month:    month,
@@ -72,6 +88,18 @@ func NewExchangeByMonth(month string) *ExchangeByMonth {
 type ExchangeByMonth struct {
 	Month    string  `json:"month"`
 	RateList []*Rate `json:"rateList"`
+}
+
+func (e *ExchangeByMonth) Copy() *ExchangeByMonth {
+	res := &ExchangeByMonth{
+		Month: e.Month,
+	}
+
+	for i := range e.RateList {
+		res.RateList = append(res.RateList, e.RateList[i].Copy())
+	}
+
+	return res
 }
 
 func (e *ExchangeByMonth) AddRate(code string, rate float64) {
@@ -93,4 +121,13 @@ type Rate struct {
 	CountryName  string  `json:"countryName"`
 	CountryCode  string  `json:"countryCode"`
 	Rate         float64 `json:"rate"`
+}
+
+func (r *Rate) Copy() *Rate {
+	return &Rate{
+		CurrencyCode: r.CurrencyCode,
+		CountryName:  r.CountryName,
+		CountryCode:  r.CountryCode,
+		Rate:         r.Rate,
+	}
 }
