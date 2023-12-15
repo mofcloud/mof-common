@@ -103,6 +103,10 @@ func (t *TimePeriod) Validate() error {
 func (t *TimePeriod) ToMonthList() []string {
 	res := make([]string, 0)
 
+	if t.Start == "" || t.End == "" {
+		return res
+	}
+
 	tsStart, _ := StringToTime(t.Start)
 	tsEnd, _ := StringToTime(t.End)
 
@@ -126,6 +130,10 @@ func (t *TimePeriod) ToMonthListForGCP() []string {
 
 func (t *TimePeriod) ToDayList() []string {
 	res := make([]string, 0)
+
+	if t.Start == "" || t.End == "" {
+		return res
+	}
 
 	startTime := t.Start
 	endTime := t.End
