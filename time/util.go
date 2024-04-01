@@ -159,6 +159,10 @@ func LastDayOfMonthTime(ts time.Time) time.Time {
 		ts = ts.Add(24 * time.Hour)
 	}
 
+	if ts.Month() == currMonth {
+		return ts
+	}
+
 	// we are already at next month
 	// now shift left for 24 hours
 	ts = ts.Add(-24 * time.Hour)
