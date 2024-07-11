@@ -16,6 +16,7 @@ var layoutList = []string{
 	"2006-1-2",
 	"2006-01",
 	"2006-1",
+	"2006-01-02T15:04Z",
 	ProphetFormat,
 	AwsCloudWatchFormat,
 	time.ANSIC,
