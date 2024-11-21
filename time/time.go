@@ -307,6 +307,12 @@ func (t *TimePeriod) SplitToDailyMap() (map[string]*TimePeriod, error) {
 		}
 	}
 
+	for _, tp := range res {
+		if len(tp.End) < 1 {
+			tp.End = tp.Start
+		}
+	}
+
 	return res, nil
 }
 
