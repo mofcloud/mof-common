@@ -270,6 +270,18 @@ func (t *TimePeriod) OneMonthBefore() error {
 	return nil
 }
 
+func (t *TimePeriod) OneDayBefore() error {
+	ts, err := StringToTime(t.Start)
+	if err != nil {
+		return err
+	}
+
+	ts = ts.Add(-24 * time.Hour)
+	t.Start = TimeToLayoutDay(ts)
+
+	return nil
+}
+
 func (t *TimePeriod) String() string {
 	return fmt.Sprintf("%s->%s", t.Start, t.End)
 }
