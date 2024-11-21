@@ -282,6 +282,34 @@ func (t *TimePeriod) OneDayBefore() error {
 	return nil
 }
 
+func (t *TimePeriod) SplitToDailyMap() (map[string]*TimePeriod, error) {
+	dayList := t.ToDayList()
+
+	res := map[string]*TimePeriod{}
+
+	if len(dayList) < 1 {
+		return map[string]*TimePeriod{}, nil
+	}
+
+	for i := range dayList {
+		day := dayList[i]
+
+		// to month, must work!
+		month, _ := StringToLayoutMonth(day)
+
+		if tp, ok := res[month]; ok {
+			tp.End = day
+		} else {
+			res[month] = &TimePeriod{
+				Start: day,
+				End:   "",
+			}
+		}
+	}
+
+	return res, nil
+}
+
 func (t *TimePeriod) String() string {
 	return fmt.Sprintf("%s->%s", t.Start, t.End)
 }
