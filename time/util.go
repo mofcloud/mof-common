@@ -150,6 +150,17 @@ func LastMonthString(str string) (string, error) {
 	return TimeToLayoutMonth(ts), nil
 }
 
+func YesterdayString(str string) (string, error) {
+	ts, err := StringToTime(str)
+	if err != nil {
+		return "", err
+	}
+
+	ts = ts.Add(-24 * time.Hour)
+
+	return TimeToLayoutDay(ts), nil
+}
+
 // LastDayOfMonthTime Convert current time to YYYY-MM-30 layout
 func LastDayOfMonthTime(ts time.Time) time.Time {
 	currMonth := ts.Month()
