@@ -19,6 +19,7 @@ var layoutList = []string{
 	"2006-01-02T15:04Z",
 	ProphetFormat,
 	AwsCloudWatchFormat,
+	LinodeFormat,
 	time.ANSIC,
 	time.UnixDate,
 	time.RubyDate,
@@ -39,6 +40,7 @@ var layoutList = []string{
 const (
 	ProphetFormat       = "2006-01-02 15:04:05"
 	AwsCloudWatchFormat = "2006-01-02 15:04:05 -0700 MST"
+	LinodeFormat        = "2006-01-02T15:04:05"
 )
 
 // TimeToLayoutMonth converts time to YYYY-MM layout
