@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -542,4 +543,210 @@ func MonthToTimePeriodDaily(month string) *TimePeriod {
 	tp.End = fmt.Sprintf("%s-%d", month, ts.Day())
 
 	return tp
+}
+
+func OneMonthBeforeTime(in time.Time) time.Time {
+	month := in.Month()
+
+	for month == in.Month() {
+		in = in.Add(-24 * time.Hour)
+	}
+
+	return in
+}
+
+func OneMonthBeforeCertainDayTime(in time.Time, day int) time.Time {
+	in = OneMonthBeforeTime(in)
+
+	for in.Day() != day {
+		in = in.Add(-24 * time.Hour)
+	}
+
+	return in
+}
+
+func ListDateForNaturalMonthSet(date string, monthCount int) []string {
+	res := make([]string, 0)
+
+	ts, err := StringToTime(date)
+	if err != nil {
+		return res
+	}
+
+	day := ts.Day()
+	month := ts.Month()
+	isLastDay := false
+	if ts.Add(24*time.Hour).Month() != month {
+		isLastDay = true
+	}
+
+	if day < 28 {
+		// common day, iterate and return date list
+		for i := 0; i < monthCount; i++ {
+			ts = OneMonthBeforeCertainDayTime(ts, day)
+			res = append(res, TimeToLayoutDay(ts))
+		}
+	} else {
+		// check the months
+		for i := 0; i < monthCount; i++ {
+			ts = OneMonthBeforeTime(ts)
+			newMonth := ts.Month()
+			newMonthStr := TimeToLayoutMonth(ts)
+			lastDayOfNewTs := LastDayOfMonthTime(ts)
+
+			switch day {
+			case 30:
+				// if last day:
+				// 		1,3,5,7,8,10,12: collect 30,31
+				// 		4,6,9,11: collect 30
+				// 		2: do nothing
+				// if not
+				// 		1,3,5,7,8,10,12: collect 30
+				// 		4,6,9,11: collect 30
+				//		2: do nothing
+
+				if isLastDay {
+					switch newMonth {
+					case 1, 3, 5, 7, 8, 10, 12:
+						res = append(res,
+							fmt.Sprintf("%s-30", newMonthStr),
+							fmt.Sprintf("%s-31", newMonthStr))
+					case 4, 6, 9, 11:
+						res = append(res,
+							fmt.Sprintf("%s-30", newMonthStr))
+					}
+				} else {
+					switch newMonth {
+					case 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12:
+						res = append(res,
+							fmt.Sprintf("%s-30", newMonthStr))
+					}
+				}
+			case 31:
+				// 1,3,5,7,8,10,12: collect 31
+				// 4,6,9,11: do nothing
+				// 2: do nothing
+				switch newMonth {
+				case 1, 3, 5, 7, 8, 10, 12:
+					res = append(res,
+						fmt.Sprintf("%s-31", newMonthStr))
+				}
+			case 29:
+				// if month == 2(which means last day):
+				// 		1,3,5,7,8,10,12: collect 29,30,31
+				// 		4,6,9,11: collect 29,30
+				// 		2: if newMonth last day == 29
+				//				collect: 29
+				//		   else:
+				//		        collect: 28
+				// else
+				//      1,3,4,5,6,7,8,9,10,11,12: collect 29
+				//		2: if newMonth last day == 29
+				//				collect: 29
+				//		   else:
+				//		        do nothing
+				if month == 2 {
+					switch newMonth {
+					case 1, 3, 5, 7, 8, 10, 12:
+						res = append(res,
+							fmt.Sprintf("%s-29", newMonthStr),
+							fmt.Sprintf("%s-30", newMonthStr),
+							fmt.Sprintf("%s-31", newMonthStr))
+					case 4, 6, 9, 11:
+						res = append(res,
+							fmt.Sprintf("%s-29", newMonthStr),
+							fmt.Sprintf("%s-30", newMonthStr))
+					case 2:
+						if lastDayOfNewTs.Day() == 29 {
+							res = append(res,
+								fmt.Sprintf("%s-29", newMonthStr))
+						} else {
+							res = append(res,
+								fmt.Sprintf("%s-28", newMonthStr))
+						}
+					}
+				} else {
+					switch newMonth {
+					case 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12:
+						res = append(res,
+							fmt.Sprintf("%s-29", newMonthStr))
+					case 2:
+						if lastDayOfNewTs.Day() == 29 {
+							res = append(res,
+								fmt.Sprintf("%s-29", newMonthStr))
+						}
+					}
+				}
+			case 28:
+				// if month == 2
+				//		if last day
+				//			1,3,5,7,8,10,12: collect 28,29,30,31
+				//       	4,6,9,11: collect 28,29,30
+				// 			2: collect 28 (29 if possible)
+				//      else
+				//			collect 28
+				// else
+				//		collect 28
+				if month == 2 {
+					if isLastDay {
+						switch newMonth {
+						case 1, 3, 5, 7, 8, 10, 12:
+							res = append(res,
+								fmt.Sprintf("%s-28", newMonthStr),
+								fmt.Sprintf("%s-29", newMonthStr),
+								fmt.Sprintf("%s-30", newMonthStr),
+								fmt.Sprintf("%s-31", newMonthStr))
+						case 4, 6, 9, 11:
+							res = append(res,
+								fmt.Sprintf("%s-28", newMonthStr),
+								fmt.Sprintf("%s-29", newMonthStr),
+								fmt.Sprintf("%s-30", newMonthStr))
+						case 2:
+							res = append(res,
+								fmt.Sprintf("%s-28", newMonthStr))
+							if LastDayOfMonthTime(ts).Day() == 29 {
+								res = append(res,
+									fmt.Sprintf("%s-29", newMonthStr))
+							}
+						}
+					} else {
+						res = append(res,
+							fmt.Sprintf("%s-28", newMonthStr))
+					}
+				} else {
+					res = append(res,
+						fmt.Sprintf("%s-28", newMonthStr))
+				}
+			}
+		}
+	}
+
+	return res
+}
+
+func ListDateForNaturalMonth(date string, monthAgo int) []string {
+	res := make([]string, 0)
+
+	set := ListDateForNaturalMonthSet(date, monthAgo)
+
+	ts, err := StringToTime(date)
+	if err != nil {
+		return res
+	}
+
+	// month before
+	for i := 0; i < monthAgo; i++ {
+		ts = OneMonthBeforeTime(ts)
+	}
+
+	monthStr := TimeToLayoutMonth(ts)
+	for i := range set {
+		e := set[i]
+
+		if strings.HasPrefix(e, monthStr) {
+			res = append(res, e)
+		}
+	}
+
+	return res
 }
